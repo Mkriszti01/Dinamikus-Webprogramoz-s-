@@ -1,0 +1,42 @@
+A dinamikus WEB programozás tanegység teljesítése
+
+Egy weboldal készítése, amely az MVC modell alkalmazásával mûködik. Az elkészült oldalnak kezelnie kell egy adatbázist, amibõl lekérdezhetõk és amibe bevihetõk az adatok. Néhány menüpont kezelése, valamint az oldal bizonyos funkcióinak naplózása is megvalósításra került. 
+
+A feladat megvalósítása 
+A feladat megvalósítása során az elsõ lépés a megfelelõ fájlszerkezet kialakítása volt. A kódokat tartalmazó mappák kialakítása:  
+
+… 
+- log: a naplózás automatikusan generált fájljai.
+- protected: a nem nyilvános mappákat és fájlokat tartalmazza.
+- controller: a vezérlésért felelõs fájlok.
+- core: egyedi elemek, amelyek a mûködést befolyásolják.
+- helper: az oldal mûködését segítõ elemek (nyelvi vezérlés, naplózás). 
+- lang: nyelvi fájlok.
+- modell: az adatok kezelésért felelõs fájlok.
+- view: a megfelelõ megjelenítést kialakító fájlok.
+- public: a nyilvános fájlok és mappák.
+	- CSS: stílusfájlok.
+	- images: képek, amelyek megjelennek az oldalon (pl: háttér kép).
+	- kep: az adatbázisban szereplõ elemek képeit tartalmazza.
+- index.php A megfelelõ mappák létrehozása után következik a fájlok létrehozása és ezzel a weboldal kialakítása.
+
+Az index.php látja el az alapvetõ vezérlési feladatokat. Mivel a fejlesztés során Wamp servert használtam, ezért a .htaccess miatt minden kérés ide érkezik, és ez alapján töltõdnek be a további állományok, így létrehozva az MVC megfelelõ objektumait.   
+
+error_reporting(E_ERROR | E_WARNING | E_PARSE); 
+ include_once "protected/core/autoload.php"; 
+  $autolad = new autoload(); 
+  $url = new urlController(); 
+  $index = new indexController($url -> readURL($_GET)); 
+
+Az index.php forráskódja
+
+Az error_reporting kifejezés a hibaüzeneteket szabályozza.  
+Az inclide_once függvény lehetõvé teszi, hogy hozzáférjünk egy adott fájlhoz. Jelen esetben ez az utoload.php, amelyben olyan utasítások szerepelnek, amelyek esetében szeretnénk, hogy az oldal indulásakor automatikusan elinduljanak. Tehát elindul a logolás, az indexek és az URL-címek ellenõrzése, a nyelvi fájlok használata és az adatbázis-vezérlés. Mivel ezek a fájlok további fájlokat hívnak meg, valamint utasításokat hajtanak végre, felépülhet a nyitóoldal.  
+A nyitó oldal felépítéséhez el kell érni az impressum-hoz, a menühöz és a footer-hez tartozó fájlokat.   
+Az oldal megfelelõ mûködésének egyik komponense az adatbázis-kapcsolat kialakítása. PHPkóddal elérhetjük az adatbázist, amelyben lekérdezéseket végezhetünk, vagy bõvíthetjük azt. A belépéshez egy connect függvény létrehozása szükséges, amelyet meghívunk az adatok feldolgozását szabályozó függvények használatakor. Minden esetben, amikor már nem használjuk az adatbázist, tehát nincs lekérdezés, módosítás stb.; biztonsági okokból megszakítjuk a kapcsolatot az adatbázissal.   
+
+A weboldal több adatot kérdez le az adatbázisból, amelyeket meg is jelenít. A lekérdezés igényét a listControlle.php továbbítja a listModell.php fájlhoz, amely elvégezi a lekérdezést, amit a listview.php megjelenít.  
+
+Az adatok megfelelõ megjelenítéséhez a lekérdezések és az oldal felépítésén kívül még a megfelelõ stíluselemek megadása is szükséges, amelyeket a style.css fájl tartalmaz. Ezekre az elemekre hivatkoznak a View mappa fájlai.  
+
+Egy PHP-ban írt foreach ciklus segítségével épül fel a táblázat, amelynek elemeit az adatbázisból kérdeztük le. A táblázat sorait és oszlopait a HTML-kód alakítja ki. A táblázat három oszlopból és tetszõleges számú sorból épül fel. A stílust a style.css „tablazat” osztálya határozza meg.
